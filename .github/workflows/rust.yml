@@ -61,9 +61,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
         bash_docker_image:
           - "bash:5.2"
           - "bash:5.1"
@@ -76,23 +73,6 @@ jobs:
           - "bash:3.2"
         sed:
           - GNU_sed
-        exclude:
-        - os: macos-latest
-          bash_docker_image: "bash:5.2"
-        - os: macos-latest
-          bash_docker_image: "bash:5.1"
-        - os: macos-latest
-          bash_docker_image: "bash:5.0"
-        - os: macos-latest
-          bash_docker_image: "bash:4.4"
-        - os: macos-latest
-          bash_docker_image: "bash:4.3"
-        - os: macos-latest
-          bash_docker_image: "bash:4.2"
-        - os: macos-latest
-          bash_docker_image: "bash:4.1"
-        - os: macos-latest
-          bash_docker_image: "bash:4.0"
         # Uncomment the next matrix when https://github.com/amber-lang/amber/issues/617 is resolved
         # include:
         #   - sed: BusyBox_sed
@@ -147,6 +127,23 @@ jobs:
           cargo test --all-targets --all-features
           docker stop test_container -t 0
           docker rm --force test_container
+  macos-test:
+    name: Rust tests on a native macOS Bash
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache dependencies installed with cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            ./target/deps
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+      - name: Run tests
+        run: |
+          cargo test --all-targets --all-features
   clippy:
     name: Clippy tests
     runs-on: ubuntu-latest
