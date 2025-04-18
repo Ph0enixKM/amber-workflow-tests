@@ -86,7 +86,6 @@ struct RunCommand {
 struct CheckCommand {
     /// Input filename ('-' to read from stdin)
     input: PathBuf,
-
     /// Disable a postprocessor
     /// Available postprocessors: 'shfmt', 'bshchk'
     /// To select multiple, pass multiple times with different values
